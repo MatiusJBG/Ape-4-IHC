@@ -1,0 +1,76 @@
+\documentclass[tikz,border=8pt]{standalone}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish]{babel}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,shapes.geometric}
+
+\tikzset{
+  process/.style={
+    draw=black,
+    rounded corners=2pt,
+    align=center,
+    text width=44mm,
+    minimum height=11mm,
+    inner sep=4pt,
+    font=\sffamily\small
+  },
+  state/.style={
+    process,
+    text width=42mm
+  },
+  decision/.style={
+    diamond,
+    draw=black,
+    aspect=2.15,
+    align=center,
+    text width=28mm,
+    inner sep=2pt,
+    font=\sffamily\small
+  },
+  terminator/.style={
+    ellipse,
+    draw=black,
+    align=center,
+    minimum width=28mm,
+    minimum height=9mm,
+    font=\sffamily\small
+  },
+  flowarrow/.style={-{Stealth[length=2mm]},draw=black,line width=0.7pt},
+  branchlabel/.style={font=\sffamily\scriptsize,fill=white,inner sep=1pt}
+}
+
+\begin{document}
+\begin{tikzpicture}
+  \node[terminator] (start) at (0,0) {Inicio};
+  \node[process] (menu) at (0,-1.35) {Menú\\Consultar productos y precios};
+  \node[process] (select) at (0,-2.8) {Elegir productos\\Agregar 1 café y 1 sánduche};
+  \node[process] (review) at (0,-4.25) {Revisar pedido\\1 café: \$1,50 + 1 sánduche: \$2,75\\Total: \$4,25};
+  \node[decision] (choice) at (0,-6.0) {¿Qué desea hacer?};
+
+  \node[process] (edit) at (-5.2,-7.55) {Editar pedido\\Volver al menú con el pedido conservado};
+  \node[process] (confirm) at (5.2,-7.55) {Confirmar pedido\\Total: \$4,25};
+  \node[state] (sending) at (5.2,-9.0) {Enviando pedido\\Mostrar estado de procesamiento};
+  \node[decision] (receivedq) at (5.2,-10.75) {¿Se recibió el pedido?};
+  \node[process] (error) at (0.5,-12.45) {Error de envío\\Conservar el pedido};
+  \node[terminator] (success) at (9.6,-12.45) {Pedido recibido};
+
+  \draw[flowarrow] (start) -- (menu);
+  \draw[flowarrow] (menu) -- (select);
+  \draw[flowarrow] (select) -- (review);
+  \draw[flowarrow] (review) -- (choice);
+
+  \draw[flowarrow] (choice) -- node[branchlabel,above left] {Editar} (edit);
+  \draw[flowarrow] (edit.west) -- ++(-12mm,0) |- node[branchlabel,pos=0.78,left] {Regresar a revisar} (review.west);
+
+  \draw[flowarrow] (choice) -- node[branchlabel,above right] {Confirmar} (confirm);
+  \draw[flowarrow] (confirm) -- (sending);
+  \draw[flowarrow] (sending) -- (receivedq);
+
+  \draw[flowarrow] (receivedq) -- node[branchlabel,above right] {Sí} (success);
+  \draw[flowarrow] (receivedq) -- node[branchlabel,left] {No} (error);
+  \draw[flowarrow] (error.west) -- ++(-10mm,0) |- node[branchlabel,pos=0.8,left] {Volver a revisar} (review.west);
+  \draw[flowarrow] (error.east) -- ++(12mm,0) |- node[branchlabel,pos=0.8,right] {Reintentar} (sending.east);
+\end{tikzpicture}
+\end{document}
+
