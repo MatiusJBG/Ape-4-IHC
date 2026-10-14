@@ -1,0 +1,76 @@
+\documentclass[tikz,border=10pt]{standalone}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish]{babel}
+\usepackage{tikz}
+\usetikzlibrary{positioning,arrows.meta}
+
+\definecolor{cafeborder}{HTML}{4A2F24}
+
+\tikzset{
+  box/.style={
+    draw=cafeborder,
+    line width=0.8pt,
+    rounded corners=3pt,
+    align=center,
+    minimum height=10mm,
+    text width=38mm,
+    inner sep=5pt,
+    font=\sffamily
+  },
+  rootbox/.style={
+    box,
+    line width=1.2pt,
+    text width=48mm,
+    minimum height=12mm,
+    font=\sffamily\bfseries
+  },
+  groupbox/.style={
+    box,
+    text width=40mm,
+    font=\sffamily\bfseries
+  },
+  statebox/.style={
+    box,
+    text width=36mm
+  },
+  relation/.style={
+    -{Stealth[length=2.2mm]},
+    draw=cafeborder,
+    line width=0.8pt
+  }
+}
+
+\begin{document}
+\begin{tikzpicture}[node distance=12mm and 16mm]
+
+  % Nodo raíz y área funcional
+  \node[rootbox] (app) {CaféU\\Aplicación móvil};
+  \node[groupbox, below=of app] (order) {Pedido};
+
+  % Pantallas principales
+  \node[box, below left=of order, xshift=-22mm] (menu) {Menú};
+  \node[box, below=of order] (review) {Revisión del pedido};
+  \node[groupbox, below right=of order, xshift=22mm] (status) {Estado del pedido};
+
+  % Estados del envío
+  \node[statebox, below left=of status, xshift=-12mm] (sending) {Enviando pedido\\\footnotesize Estado transitorio};
+  \node[statebox, below=of status] (received) {Pedido recibido\\\footnotesize Resultado exitoso};
+  \node[statebox, below right=of status, xshift=12mm] (error) {Error de envío\\\footnotesize Estado recuperable};
+
+  % Relaciones estructurales: las flechas indican agrupación, no secuencia
+  \draw[relation] (app) -- (order);
+  \draw[relation] (order) -- (menu);
+  \draw[relation] (order) -- (review);
+  \draw[relation] (order) -- (status);
+  \draw[relation] (status) -- (sending);
+  \draw[relation] (status) -- (received);
+  \draw[relation] (status) -- (error);
+
+  % Nota de lectura
+  \node[below=17mm of review, text width=125mm, align=center, font=\sffamily\small]
+    (note) {Las flechas muestran la organización de pantallas y estados; no representan el recorrido paso a paso del usuario.};
+
+\end{tikzpicture}
+\end{document}
+
